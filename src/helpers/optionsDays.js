@@ -1,5 +1,9 @@
 export const optionsDays = [
   {
+    label: "Selecciona",
+    value: "",
+  },
+  {
     label: "Lunes",
     value: 1,
   },

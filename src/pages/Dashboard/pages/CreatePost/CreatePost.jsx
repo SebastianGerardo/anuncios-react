@@ -1,13 +1,7 @@
 import { useForm } from "react-hook-form";
 // components
-import { Button, Input } from "@/components";
+import { Button } from "@/components";
 import { Section } from "@/components/general/Section";
-// templates
-import { information } from "@/templates/AnnouncementPublication/components/AsideSection";
-import { InputFile } from "./components/InputFile";
-import { useState } from "react";
-import { uploadImage } from "@/apis/files/apiFiles";
-import { UploadFile } from "./components/UploadFile";
 import { UploadImage } from "./components/UploadImage";
 import { UploadVideo } from "./components/UploadVideo";
 import { BasicInformation } from "./components/BasicInformation";
@@ -15,12 +9,16 @@ import { AdditionalInfo } from "./components/AdditionalInfo";
 import { TextArea } from "@/components/inputs/TextArea";
 import { Schedules } from "./components/Schedules";
 import { Prices } from "./components/Prices";
+// templates
+import { uploadImage } from "@/apis/files/apiFiles";
 
 export const CreatePost = () => {
   const formPosts = useForm({
     defaultValues: {
       videos: [],
       photos: [],
+      schedules: [],
+      prices: []
     },
   });
 
@@ -66,8 +64,8 @@ export const CreatePost = () => {
         <Section title="Presentación">
           <TextArea name="presentation" rows={10} control={control} />
         </Section>
-        <Prices />
-        <Schedules />
+        <Prices formPosts={formPosts} />
+        <Schedules formPosts={formPosts} />
       </div>
       <div>
         <AdditionalInfo />
