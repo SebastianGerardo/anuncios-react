@@ -26,7 +26,7 @@ export const Prices = ({ formPosts }) => {
               onClick={() => openModal(price)}
               key={price.id}
             >
-              {price.price}
+              {price.time} {price.typeTime} -S/.{price.price}
             </div>
           ))}
         <Button

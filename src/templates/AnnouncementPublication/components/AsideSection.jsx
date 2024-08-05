@@ -2,18 +2,26 @@
 import { WhiteCard } from "@/components";
 import { TitleSection } from "./TitleSection";
 
-export const AsideSection = (props) => {
+export const AsideSection = ({ data }) => {
+  const { country, phone } = data;
+
   return (
     <div className="h-max">
       <WhiteCard>
         <TitleSection title="Información" />
         <article className="text-sm">
-          {information.map(({ label, value }, index) => (
-            <div key={index} className="grid grid-cols-2 border-b border-gray-200 p-2">
-              <p className="font-bold">{label}:</p>
-              <p>{value}</p>
+          {country && (
+            <div className="grid grid-cols-2 capitalize border-b border-gray-200 p-2">
+              <p className="font-bold">Nacionalidad:</p>
+              <p>{country}</p>
             </div>
-          ))}
+          )}
+          {phone && (
+            <div className="grid grid-cols-2 border-b border-gray-200 p-2">
+              <p className="font-bold">Teléfono:</p>
+              <p>{phone}</p>
+            </div>
+          )}
         </article>
       </WhiteCard>
     </div>

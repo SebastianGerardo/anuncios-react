@@ -38,7 +38,7 @@ export const Modal = ({ isOpen, onClose, children }) => {
           )}
           <animated.div
             style={styles}
-            className="bg-white rounded-lg shadow-lg p-6 z-50 max-w-[80%] max-h-[80%] sm:max-w-[80%] sm:max-h-[80%] md:max-w-[70%] md:max-h-[70%]  overflow-y-auto"
+            className="bg-white rounded-lg shadow-lg p-6 z-50 max-w-[80%] max-h-[80%] sm:max-w-[80%] sm:max-h-[80%] md:max-w-[70%] md:max-h-[70%] overflow-y-auto overflow-x-hidden"
           >
             {children}
           </animated.div>

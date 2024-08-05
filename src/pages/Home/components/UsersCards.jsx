@@ -4,7 +4,10 @@ import { useState } from "react";
 // import { ModalSellerProfile } from "../modals/ModalSellerProfile/ModalSellerProfile";
 // hooks
 import { useModal } from "@/hooks/general/useModal";
-
+import { useUserPosts } from "@/hooks/async/useUserPosts";
+import { Card } from "@/components";
+import { Modal } from "@/components/general/Modal";
+import { AnnouncementPublication } from "@/templates/AnnouncementPublication/AnnouncementPublication";
 
 export const UsersCards = () => {
   const [user, setUser] = useState({});
@@ -13,14 +16,20 @@ export const UsersCards = () => {
     onClose: () => setUser({}),
   });
 
+  const { data } = useUserPosts();
+
+  console.log(data);
+
   return (
     <>
       <article className="columns-2 md:columns-3 lg:columns-5 xl:columns-5 ">
-        {/* {images.map((image, index) => (
-          <Card onClick={() => openModal(image)} key={index} {...image} />
-        ))} */}
+        {data && data.length > 0 && data.map((data, index) => (
+          <Card data={data} onClick={() => openModal(data)} key={index} />
+        ))}
       </article>
-      {/* <ModalSellerProfile user={user} isOpen={isOpen} onClose={closeModal} /> */}
+      <Modal isOpen={isOpen} onClose={closeModal}>
+        <AnnouncementPublication data={user} />
+      </Modal>
     </>
   );
 };

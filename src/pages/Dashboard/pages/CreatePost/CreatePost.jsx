@@ -5,72 +5,122 @@ import { Section } from "@/components/general/Section";
 import { UploadImage } from "./components/UploadImage";
 import { UploadVideo } from "./components/UploadVideo";
 import { BasicInformation } from "./components/BasicInformation";
-import { AdditionalInfo } from "./components/AdditionalInfo";
 import { TextArea } from "@/components/inputs/TextArea";
 import { Schedules } from "./components/Schedules";
 import { Prices } from "./components/Prices";
 // templates
-import { uploadImage } from "@/apis/files/apiFiles";
+import { uploadFilesSequentially } from "./utils/uploadFilesSequentially";
+import { createPost } from "@/apis/posts/apiPosts";
+// utils
+import { toast } from "sonner";
+import * as Yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { Locations } from "./components/Locations";
+import { useNavigate } from "react-router-dom";
 
 export const CreatePost = () => {
+  const navigate = useNavigate();
   const formPosts = useForm({
+    resolver: yupResolver(validationSchema),
     defaultValues: {
       videos: [],
       photos: [],
       schedules: [],
-      prices: []
+      prices: [],
+      isCall: false,
+      isWhatsapp: false,
+      isTelegram: false,
+      locations: {},
+      isLoading: false,
     },
   });
 
-  const { control } = formPosts;
+  const { control, handleSubmit, watch, setValue } = formPosts;
 
-  const uploadFile = async (file) => {
-    const formData = new FormData();
-    formData.append("file", file);
-
+  const uploadFiles = async ({
+    locations: { department, province, district },
+    isLoading,
+    ...e
+  }) => {
+    setValue("isLoading", true);
     try {
-      const response = await uploadImage(formData);
-      console.log(response);
+      const responseImage = await uploadFilesSequentially("photos", e.photos);
+      const responseVideo = await uploadFilesSequentially("videos", e.videos);
+
+      createPost({
+        ...e,
+        location: `${department}${province}${district}`,
+        photos: responseImage,
+        videos: responseVideo,
+      })
+        .then(({ message }) => {
+          if (message === "POST_CREATED") {
+            toast.success("La publicación se ha creado exitósamente!");
+            navigate("/dashboard/user/home", { state: { logged: true } });
+          }
+        })
+        .catch(() =>
+          toast.error("Ha ocurrido un error, vuelva a intentarlo más tarde")
+        );
     } catch (error) {
-      console.error("Error uploading file:", error);
-      throw error;
-    }
-  };
-
-  const uploadFilesSequentially = async (files) => {
-    for (const file of files) {
-      await uploadFile(file);
-    }
-  };
-
-  const uploadFiles = async (e) => {
-    e.preventDefault();
-    // Aquí puedes manejar la lógica para subir los archivos al backend
-    try {
-      // await uploadFilesSequentially();
-
-      console.log("Form submitted successfully");
-    } catch (error) {
-      console.error("Error uploading files:", error);
+      toast.error("Ha ocurrido un error, vuelva a intentarlo más tarde");
+    } finally {
+      setValue("isLoading", false);
     }
   };
 
   return (
-    <form onSubmit={uploadFiles} className="grid grid-cols-[70%_auto] gap-6">
+    <form
+      onSubmit={handleSubmit(uploadFiles)}
+      className="grid grid-cols-1 lg:grid-cols-[70%_auto] gap-6"
+    >
       <div className="flex flex-col gap-5">
         <BasicInformation control={control} />
+        <Locations locations={watch("locations")} control={control} />
         <UploadImage formPosts={formPosts} />
         <UploadVideo formPosts={formPosts} />
-        <Section title="Presentación">
-          <TextArea name="presentation" rows={10} control={control} />
-        </Section>
         <Prices formPosts={formPosts} />
         <Schedules formPosts={formPosts} />
       </div>
       <div>
-        <AdditionalInfo />
-        <Button className="w-full mt-4">Crear publicación</Button>
+        <Section title="Presentación">
+          <TextArea name="presentation" rows={10} control={control} />
+        </Section>
+        <Button disabled={watch("isLoading")} className="w-full mt-4">
+          Crear publicación
+        </Button>
       </div>
     </form>
   );
 };
+
+const validationSchema = Yup.object().shape({
+  name: Yup.string().required("Este campo es obligatorio"),
+  age: Yup.number()
+    .required("Este campo es obligatorio")
+    .typeError("Ingrese un valor válido")
+    .min(18, "La edad mínima es de 18 años")
+    .max(65, "La edad máxima es de 65 años"),
+  title: Yup.string().required("Este campo es obligatorio"),
+  presentation: Yup.string().required("Este campo es obligatorio"),
+  locations: Yup.object().shape({
+    department: Yup.string().required("Este campo es obligatorio"),
+    province: Yup.string().required("Este campo es obligatorio"),
+    district: Yup.string().required("Este campo es obligatorio"),
+  }),
+  country: Yup.string().required("Este campo es obligatorio"),
+  phone: Yup.string()
+    .required("El teléfono es obligatorio")
+    .test("inicia-con-nueve", "El teléfono debe comenzar con 9", (value) => {
+      return value?.toString().startsWith("9");
+    })
+    .min(9, "El teléfono debe tener al menos 9 dígitos")
+    .max(9, "Máximo 9 Caracteres"),
+  isCall: Yup.boolean(),
+  isWhatsapp: Yup.boolean(),
+  isTelegram: Yup.boolean(),
+  photos: Yup.array(),
+  videos: Yup.array(),
+  prices: Yup.array(),
+  schedules: Yup.array(),
+});

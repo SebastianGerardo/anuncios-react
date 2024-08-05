@@ -45,7 +45,7 @@ export const ModalPrices = ({ price, formPosts, closeModal }) => {
   };
 
   return (
-    <section className="min-w-[23rem]">
+    <section className="xl:min-w-[23rem]">
       <h1 className="font-bold text-2xl mb-2">Precio</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 items-end gap-2">
         <Input label="Tiempo" name="time" type="number" control={control} />

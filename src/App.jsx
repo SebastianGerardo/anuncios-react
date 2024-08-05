@@ -25,7 +25,7 @@ export const App = () => {
         <Route path="*" element={<Navigate to="sign_in" />} />
         <Route path="sign_in" Component={SignIn} />
         <Route path="sign_up" Component={SignUp} />
-        <Route path="create_password/:token" Component={CreatePassword} />
+        <Route path="new_password/:token" Component={CreatePassword} />
         <Route path="recover_password/:token" Component={RecoverPassword} />
       </Route>
       <Route

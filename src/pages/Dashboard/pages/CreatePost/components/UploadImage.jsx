@@ -18,7 +18,7 @@ export const UploadImage = ({ formPosts }) => {
 
   return (
     <Section title="Fotos">
-      <div className="grid grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-3 xl:grid-cols-4 gap-6">
         {files &&
           files?.length > 0 &&
           files.map(({ file, id }) => (

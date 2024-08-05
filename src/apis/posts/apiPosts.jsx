@@ -10,3 +10,13 @@ export const getUserPosts = async () => {
 
   return data;
 };
+
+export const createPost = async (body) => {
+  const { data } = await apiBody.post(`/posts`, body, {
+    headers: {
+      Authorization: `Bearer ${getTokenUser()}`,
+    },
+  });
+
+  return data;
+};

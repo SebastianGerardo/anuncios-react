@@ -53,7 +53,7 @@ export const ModalSchedules = ({ closeModal, formPosts, schedule }) => {
   };
 
   return (
-    <section className="min-w-[23rem]">
+    <section className="xl:min-w-[23rem]">
       <h1 className="font-bold text-2xl mb-2">Horario</h1>
       <Select
         label="Día"
